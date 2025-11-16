@@ -43,11 +43,32 @@ const login = async (req, res, next) => {
 
     const user = await User.findOne({ email });
     if (!user) return sendError(res, 401, 'Invalid credentials');
+
     const match = await user.comparePassword(password);
     if (!match) return sendError(res, 401, 'Invalid credentials');
 
-    const token = jwt.sign({ id: user._id, salonId: user.salonId }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-    return sendSuccess(res, { token, user: { id: user._id, name: user.name, email: user.email } }, 'Logged in');
+    // JWT with role included
+    const token = jwt.sign(
+      { id: user._id, salonId: user.salonId, role: user.role },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '7d' }
+    );
+
+    // Send user info + role to frontend
+    return sendSuccess(
+      res,
+      {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          salonId: user.salonId
+        }
+      },
+      'Logged in'
+    );
   } catch (err) {
     next(err);
   }
