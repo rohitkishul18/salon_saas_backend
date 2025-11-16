@@ -1,0 +1,56 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/user.model');
+const Salon = require('../models/salon.model');
+const makeSlug = require('../utils/slugify');
+const { sendSuccess, sendError } = require('../utils/response');
+
+const register = async (req, res, next) => {
+  try {
+    const { salonName, ownerName, email, phone, password } = req.body;
+    if (!salonName || !ownerName || !email || !password) return sendError(res, 400, 'Missing fields');
+
+    // create salon
+    const slug = makeSlug(salonName);
+    let uniqueSlug = slug;
+    // ensure uniqueness
+    let i = 1;
+    while (await Salon.findOne({ slug: uniqueSlug })) {
+      uniqueSlug = `${slug}-${i++}`;
+    }
+    const salon = await Salon.create({ name: salonName, slug: uniqueSlug, contact: { phone, email } });
+
+    // create owner user
+    const user = await User.create({
+      name: ownerName,
+      email,
+      phone,
+      password,
+      role: 'owner',
+      salonId: salon._id
+    });
+
+    const token = jwt.sign({ id: user._id, salonId: salon._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    return sendSuccess(res, { token, user: { id: user._id, name: user.name, email: user.email }, salon }, 'Registered');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return sendError(res, 400, 'Missing fields');
+
+    const user = await User.findOne({ email });
+    if (!user) return sendError(res, 401, 'Invalid credentials');
+    const match = await user.comparePassword(password);
+    if (!match) return sendError(res, 401, 'Invalid credentials');
+
+    const token = jwt.sign({ id: user._id, salonId: user.salonId }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+    return sendSuccess(res, { token, user: { id: user._id, name: user.name, email: user.email } }, 'Logged in');
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login };
