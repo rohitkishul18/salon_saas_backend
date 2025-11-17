@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth.middleware');
-const { checkRole } = require('../middlewares/admin.middleware').default;
+const { checkRole } = require('../middlewares/admin.middleware');
 const salonController = require('../controllers/salon.controller');
 
 // Owner can manage their own salon, superadmin can access all

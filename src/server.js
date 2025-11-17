@@ -13,6 +13,7 @@ const salonRoutes = require('./routes/salon.routes');
 const locationRoutes = require('./routes/location.routes');
 const serviceRoutes = require('./routes/service.routes');
 const bookingRoutes = require('./routes/booking.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
 // const publicRoutes = require('./routes/public.routes');
 // const errorMiddleware = require('./middlewares/error.middleware');
 
@@ -30,9 +31,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/admin/auth', authRoutes);
 app.use('/api/admin/salon', salonRoutes);
-app.use('/api/admn/location', locationRoutes);
+app.use('/api/admin/location', locationRoutes);
 app.use('/api/admin/service', serviceRoutes);
 app.use('/api/admin/booking', bookingRoutes);
+app.use("/api/admin/dashboard",dashboardRoutes);
 // app.use('/api/admin/public', publicRoutes);
 
 
