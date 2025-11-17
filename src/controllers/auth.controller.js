@@ -7,17 +7,26 @@ const { sendSuccess, sendError } = require('../utils/response');
 const register = async (req, res, next) => {
   try {
     const { salonName, ownerName, email, phone, password } = req.body;
-    if (!salonName || !ownerName || !email || !password) return sendError(res, 400, 'Missing fields');
+    if (!salonName || !ownerName || !email || !password) {
+      return sendError(res, 400, 'Missing fields');
+    }
 
-    // create salon
+    // create slug
     const slug = makeSlug(salonName);
     let uniqueSlug = slug;
-    // ensure uniqueness
     let i = 1;
+
+    // ensure unique slug
     while (await Salon.findOne({ slug: uniqueSlug })) {
       uniqueSlug = `${slug}-${i++}`;
     }
-    const salon = await Salon.create({ name: salonName, slug: uniqueSlug, contact: { phone, email } });
+
+    // create salon
+    const salon = await Salon.create({
+      name: salonName,
+      slug: uniqueSlug,
+      contact: { phone, email }
+    });
 
     // create owner user
     const user = await User.create({
@@ -25,12 +34,32 @@ const register = async (req, res, next) => {
       email,
       phone,
       password,
-      role: 'owner',
+      role: 'salon-owner',
       salonId: salon._id
     });
 
-    const token = jwt.sign({ id: user._id, salonId: salon._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
-    return sendSuccess(res, { token, user: { id: user._id, name: user.name, email: user.email }, salon }, 'Registered');
+    // generate token
+    const token = jwt.sign(
+      { id: user._id, salonId: salon._id, role: user.role },
+      process.env.JWT_SECRET || 'secret',
+      { expiresIn: '7d' }
+    );
+
+    return sendSuccess(
+      res,
+      {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,            // <<=== ROLE ADDED
+          salonId: salon._id
+        },
+        salon
+      },
+      'Registered successfully'
+    );
   } catch (err) {
     next(err);
   }
