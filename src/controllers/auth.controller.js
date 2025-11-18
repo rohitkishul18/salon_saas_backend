@@ -34,6 +34,7 @@ const register = async (req, res, next) => {
       email,
       phone,
       password,
+      isActive: true,
       role: 'salon-owner',
       salonId: salon._id
     });
@@ -54,6 +55,7 @@ const register = async (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,            // <<=== ROLE ADDED
+          isActive: user.isActive,
           salonId: salon._id
         },
         salon
@@ -68,22 +70,35 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return sendError(res, 400, 'Missing fields');
 
+    if (!email || !password) {
+      return sendError(res, 400, "Missing fields");
+    }
+
+    // Fetch user
     const user = await User.findOne({ email });
-    if (!user) return sendError(res, 401, 'Invalid credentials');
+    if (!user) return sendError(res, 401, "Invalid credentials");
 
+    if (user.isActive === false) {
+      return sendError(
+        res,
+        403,
+        "Your account has been deactivated by Super Admin. Please contact support."
+      );
+    }
+
+    // Password check
     const match = await user.comparePassword(password);
-    if (!match) return sendError(res, 401, 'Invalid credentials');
+    if (!match) return sendError(res, 401, "Invalid credentials");
 
-    // JWT with role included
+    // Create JWT token
     const token = jwt.sign(
       { id: user._id, salonId: user.salonId, role: user.role },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET || "secret",
+      { expiresIn: "7d" }
     );
 
-    // Send user info + role to frontend
+    // Successful login response
     return sendSuccess(
       res,
       {
@@ -93,14 +108,17 @@ const login = async (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          salonId: user.salonId
+          salonId: user.salonId,
+          isActive: user.isActive
         }
       },
-      'Logged in'
+      "Logged in"
     );
+
   } catch (err) {
     next(err);
   }
 };
+
 
 module.exports = { register, login };

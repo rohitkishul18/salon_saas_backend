@@ -7,7 +7,8 @@ const UserSchema = new mongoose.Schema({
   phone: String,
   password: { type: String, required: true },
   role: { type: String, enum: ['salon-owner','superadmin'], default: 'salon-owner' },
-  salonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Salon' }
+  salonId: { type: mongoose.Schema.Types.ObjectId, ref: 'Salon' },
+  isActive: { type: Boolean, default: true } 
 }, { timestamps: true });
 
 UserSchema.pre('save', async function(next){
