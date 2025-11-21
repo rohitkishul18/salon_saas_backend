@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+const bycrypt = require('bcryptjs');
 const Salon = require('../models/salon.model');
 const makeSlug = require('../utils/slugify');
 const { sendSuccess, sendError } = require('../utils/response');
@@ -88,7 +89,7 @@ const login = async (req, res, next) => {
     }
 
     // Password check
-    const match = await user.comparePassword(password);
+    const match = await bycrypt.compare(password, user.password); 
     if (!match) return sendError(res, 401, "Invalid credentials");
 
     // Create JWT token

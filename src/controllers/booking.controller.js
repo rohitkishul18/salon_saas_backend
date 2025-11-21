@@ -73,4 +73,16 @@ const updateBookingStatus = async (req, res, next) => {
   }
 };
 
-module.exports = { createBooking, listBookings, updateBookingStatus };
+const deleteBooking = async (req, res, next) => {
+  try {
+    // perticular user booking booking Deleted
+    const { id } = req.params;
+    const salonId = req.user.salonId;
+    await Booking.findOneAndDelete({ _id: id, salonId });
+    sendSuccess(res, {}, 'Deleted');
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createBooking, listBookings, updateBookingStatus ,deleteBooking};
