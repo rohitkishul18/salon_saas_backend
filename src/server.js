@@ -18,6 +18,10 @@ const superadminRoutes = require('./routes/superadmin.routes');
 // const publicRoutes = require('./routes/public.routes');
 // const errorMiddleware = require('./middlewares/error.middleware');
 
+// customer routes can be added here
+const homeRoutes = require('./routes/home.routes');
+const customerBranchRoutes =  require("./routes/customer-branch.routes")
+
 
 connect();
 
@@ -36,9 +40,13 @@ app.use('/api/admin/location', locationRoutes);
 app.use('/api/admin/service', serviceRoutes);
 app.use('/api/admin/booking', bookingRoutes);
 app.use("/api/admin/dashboard",dashboardRoutes);
+// superadmin routes
 app.use("/api/superadmin",superadminRoutes);
 // app.use('/api/admin/public', publicRoutes);
 
+// customer routes can be added here    
+app.use('/api/customer', homeRoutes);
+app.use("/api/customer/branch",customerBranchRoutes);
 
 
 app.get('/health', (req, res) => res.json({ ok: true }));
