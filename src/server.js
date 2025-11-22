@@ -20,13 +20,19 @@ const superadminRoutes = require('./routes/superadmin.routes');
 
 // customer routes can be added here
 const homeRoutes = require('./routes/home.routes');
-const customerBranchRoutes =  require("./routes/customer-branch.routes")
+const customerBranchRoutes =  require("./routes/customer-branch.routes");
+const customerBookingRoutes =  require("./routes/customer-booking.routes");
+const customerAuthRoutes = require("./routes/customer.auth.routes.js");
 
 
 connect();
-
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,6 +53,8 @@ app.use("/api/superadmin",superadminRoutes);
 // customer routes can be added here    
 app.use('/api/customer', homeRoutes);
 app.use("/api/customer/branch",customerBranchRoutes);
+app.use('/api/customer/booking', customerBookingRoutes);
+app.use('/api/customer/auth',customerAuthRoutes);
 
 
 app.get('/health', (req, res) => res.json({ ok: true }));

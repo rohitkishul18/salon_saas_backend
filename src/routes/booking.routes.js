@@ -11,7 +11,7 @@ const {
   deleteBooking
 } = require('../controllers/booking.controller');
 
-router.post('/create', createBooking);
+// router.post('/create', createBooking);
 
 router.use(auth);
 
