@@ -4,6 +4,7 @@ const router = express.Router();
 const { 
   createBooking, 
 } = require('../controllers/booking.controller');
-router.post('/create', createBooking);
+const customerAuth = require('../middlewares/customerAuth');
+router.post('/create', customerAuth, createBooking);
 
 module.exports = router;

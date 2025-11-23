@@ -23,6 +23,7 @@ const homeRoutes = require('./routes/home.routes');
 const customerBranchRoutes =  require("./routes/customer-branch.routes");
 const customerBookingRoutes =  require("./routes/customer-booking.routes");
 const customerAuthRoutes = require("./routes/customer.auth.routes.js");
+const customerSalonRoutes = require("./routes/customer-salon.routes.js");
 
 
 connect();
@@ -55,6 +56,7 @@ app.use('/api/customer', homeRoutes);
 app.use("/api/customer/branch",customerBranchRoutes);
 app.use('/api/customer/booking', customerBookingRoutes);
 app.use('/api/customer/auth',customerAuthRoutes);
+app.use('/api/customer/salon',customerSalonRoutes );
 
 
 app.get('/health', (req, res) => res.json({ ok: true }));
