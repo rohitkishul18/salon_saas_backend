@@ -2,18 +2,30 @@ const Location = require('../models/location.model');
 const { sendSuccess, sendError } = require('../utils/response');
 const makeSlug = require('../utils/slugify');
 
-
 const getLocations = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    const locations = await Location.find({ salonId }).sort({ createdAt: -1 });
+    const locations = await Location.find({ salonId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-    sendSuccess(res, locations);
+    const total = await Location.countDocuments({ salonId });
+
+    const pagination = {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit)
+    };
+
+    return sendSuccess(res, { data: locations, pagination });
   } catch (err) { next(err); }
 };
-
-
 
 const createLocation = async (req, res, next) => {
   try {

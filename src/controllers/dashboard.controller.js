@@ -70,7 +70,7 @@ exports.getDashboard = async (req, res) => {
     // -----------------------
     const recent = await Booking.find({ salonId })
       .sort({ createdAt: -1 })
-      .limit(5)
+      .limit(3)
       .populate("serviceId", "name");
 
     const recentBookings = recent.map(b => ({

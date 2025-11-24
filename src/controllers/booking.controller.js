@@ -36,17 +36,35 @@ const createBooking = async (req, res, next) => {
   }
 };
 
-// Admin: list bookings of salon
+// Admin: list bookings of salon with pagination
 const listBookings = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    const bookings = await Booking.find({ salonId })
+    const query = { salonId };
+
+    // Get total count
+    const total = await Booking.countDocuments(query);
+
+    // Get paginated bookings
+    const bookings = await Booking.find(query)
+      .skip(skip)
+      .limit(limit)
       .populate('locationId', 'name')
-      .populate('serviceId', 'title price')
+      .populate('serviceId', 'name durationMinutes price')
       .sort({ createdAt: -1 });
 
-    sendSuccess(res, bookings);
+    const pagination = {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit)
+    };
+
+    sendSuccess(res, { data: bookings, pagination });
   } catch (err) {
     next(err);
   }

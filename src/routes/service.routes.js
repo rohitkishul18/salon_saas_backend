@@ -6,7 +6,9 @@ const {
   addService,
   listServices,
   updateService,
-  deleteService
+  deleteService, 
+  deleteServicesByLocation,
+  getServicesByLocation
 } = require('../controllers/service.controller');
 
 router.use(auth);
@@ -15,6 +17,8 @@ router.use(auth);
 router.post('/', checkRole(['salon-owner']), addService);
 router.put('/:id', checkRole(['salon-owner']), updateService);
 router.delete('/:id', checkRole(['salon-owner']), deleteService);
+
+
 
 // salon-owner + superadmin — list their services
 router.get('/', checkRole(['salon-owner', 'superadmin']), listServices);

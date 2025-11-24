@@ -1,10 +1,11 @@
 const Service = require('../models/service.model');
+// const Location = require('../models/location.model');
 const { sendSuccess, sendError } = require('../utils/response');
 
 const addService = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
-    const { locationId, name, description, price, durationMinutes, imageUrl } = req.body;
+    const { locationId, name, description, price, durationMinutes } = req.body;
 
     if (!locationId || !name) {
       return sendError(res, 400, 'Missing required fields');
@@ -17,7 +18,6 @@ const addService = async (req, res, next) => {
       description: description || '',
       price: price || 0,
       durationMinutes: durationMinutes || 30,
-      imageUrl: imageUrl || null
     });
 
     return sendSuccess(res, service, 'Service created successfully');
@@ -29,10 +29,26 @@ const addService = async (req, res, next) => {
 const listServices = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    const services = await Service.find({ salonId }).populate("locationId", "name");
+    const services = await Service.find({ salonId })
+      .skip(skip)
+      .limit(limit)
+      .populate("locationId", "name")
+      .sort({ createdAt: -1 });
 
-    return sendSuccess(res, services);
+    const total = await Service.countDocuments({ salonId });
+
+    const pagination = {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit)
+    };
+
+    return sendSuccess(res, { data: services, pagination });
   } catch (err) {
     next(err);
   }
@@ -76,9 +92,11 @@ const deleteService = async (req, res, next) => {
   }
 };
 
+
 module.exports = {
   addService,
   listServices,
   updateService,
-  deleteService
+  deleteService,
+
 };
