@@ -14,8 +14,9 @@ const getBranchWithServices = async (req, res) => {
     // 2️⃣ Find salon
     const salon = await Salon.findById(branch.salonId);
 
-    // 3️⃣ Find services for this specific location/branch
-    const services = await Service.find({ locationId: branch._id });
+    // 3️⃣ Find services for this specific location/branch (updated for multi-location support)
+    const services = await Service.find({ locationIds: branch._id })
+      .populate('locationIds', 'name');  // Optional: populate if needed for other fields
 
     return sendSuccess(res, {
       branch,

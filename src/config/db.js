@@ -1,12 +1,20 @@
+// config/db.js
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/salon_saas';
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  console.log('MongoDB connected');
+  try {
+    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/salon_saas';
+
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    console.log('✅ MongoDB Connected');
+  } catch (error) {
+    console.error('❌ MongoDB Connection Error:', error.message);
+    process.exit(1);  // Stop server if DB fails
+  }
 };
 
 module.exports = connectDB;

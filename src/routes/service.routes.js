@@ -7,8 +7,6 @@ const {
   listServices,
   updateService,
   deleteService, 
-  deleteServicesByLocation,
-  getServicesByLocation
 } = require('../controllers/service.controller');
 
 router.use(auth);

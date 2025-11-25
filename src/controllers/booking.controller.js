@@ -53,7 +53,7 @@ const listBookings = async (req, res, next) => {
     const bookings = await Booking.find(query)
       .skip(skip)
       .limit(limit)
-      .populate('locationId', 'name')
+      .populate('locationId', 'name address')
       .populate('serviceId', 'name durationMinutes price')
       .sort({ createdAt: -1 });
 
