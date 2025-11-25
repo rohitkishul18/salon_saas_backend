@@ -6,8 +6,7 @@ const { sendSuccess, sendError } = require('../utils/response');
 // Create booking (public)
 const createBooking = async (req, res, next) => {
   try {
-    const { salonId, locationId, serviceId, customerName, customerPhone, scheduledAt, notes } = req.body;
-
+    const { salonId, locationId, serviceId, customerName, status, customerPhone, scheduledAt, notes } = req.body;
     if (!salonId || !locationId || !serviceId || !customerName || !customerPhone || !scheduledAt) {
       return sendError(res, 400, 'Missing fields');
     }
@@ -27,6 +26,7 @@ const createBooking = async (req, res, next) => {
       customerName,
       customerPhone,
       scheduledAt,
+      status,
       notes
     });
 

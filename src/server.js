@@ -43,7 +43,7 @@ const app = express();
 // }
 
 const corsOptions = {
-    origin: ['http://localhost:4200','http://localhost:64528'],   // ADD YOUR FRONTEND URL
+    origin: ['http://localhost:4200','http://localhost:62511'],   // ADD YOUR FRONTEND URL
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']

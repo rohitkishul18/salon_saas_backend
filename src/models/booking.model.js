@@ -7,7 +7,7 @@ const BookingSchema = new mongoose.Schema({
   customerName: { type: String, required: true },
   customerPhone: { type: String, required: true },
   scheduledAt: { type: Date, required: true },
-  status: { type: String, enum: ['pending','confirmed','cancelled','done'], default: 'pending' },
+  status: { type: String, enum: ['pending','confirmed','cancelled','done'], default: 'confirmed' },
   notes: String
 }, { timestamps: true });
 
