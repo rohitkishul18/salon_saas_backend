@@ -19,6 +19,8 @@ const serviceRoutes = require('./routes/service.routes');
 const bookingRoutes = require('./routes/booking.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const superadminRoutes = require('./routes/superadmin.routes');
+const adminCustomersRoutes = require('./routes/admin-customers.routes');
+
 
 // Customer routes
 const homeRoutes = require('./routes/home.routes');
@@ -42,15 +44,39 @@ const app = express();
 //     app.use(compression());    
 // }
 
+// const corsOptions = {
+//     origin: ['http://localhost:4200','http://localhost:56057'],   // ADD YOUR FRONTEND URL
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization']
+// };
+ 
+// app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions));  // FIX PRE-FLIGHT ISSUES
+
 const corsOptions = {
-    origin: ['http://localhost:4200','http://localhost:62511'],   // ADD YOUR FRONTEND URL
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+  origin: true,  // ✅ Dev: Allow all (switch to array: ['http://localhost:4200'] in prod)
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
  
+// Apply CORS FIRST
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));  // FIX PRE-FLIGHT ISSUES
+app.options('*', cors(corsOptions));  // Handle preflight
+
+// Debug middleware (REMOVE after fix)
+app.use((req, res, next) => {
+  console.log(`[CORS DEBUG] ${req.method} ${req.path} from origin: ${req.headers.origin}`);
+  next();
+});
+
+
+
+
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -64,6 +90,7 @@ app.use('/api/admin/location', locationRoutes);
 app.use('/api/admin/service', serviceRoutes);
 app.use('/api/admin/booking', bookingRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/admin/customers", adminCustomersRoutes);
 // Superadmin routes
 app.use("/api/superadmin", superadminRoutes);
 
