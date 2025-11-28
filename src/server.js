@@ -55,7 +55,7 @@ const app = express();
 // app.options('*', cors(corsOptions));  // FIX PRE-FLIGHT ISSUES
 
 const corsOptions = {
-  origin: true,  // ✅ Dev: Allow all (switch to array: ['http://localhost:4200'] in prod)
+  origin: true, 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -64,9 +64,9 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
  
-// Apply CORS FIRST
+
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));  // Handle preflight
+app.options('*', cors(corsOptions)); 
 
 // Debug middleware (REMOVE after fix)
 app.use((req, res, next) => {
@@ -107,9 +107,7 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 
 app.use(errorHandler);
 
-// -----------------------------------
-// 🟢 Start Server
-// -----------------------------------
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
