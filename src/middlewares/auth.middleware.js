@@ -15,13 +15,13 @@ module.exports = async (req, res, next) => {
     if (!user) return sendError(res, 401, 'Invalid token');
 
     if (user.role === 'salon-owner' && user.isActive === false) {
-      return sendError(res, 403, 'Account deactivated by admin');
+      return sendError(res, 403, 'Your account has been deactivated. Please contact support.');
     }
 
     req.user = user;
     next();
 
   } catch (err) {
-    return sendError(res, 401, 'Unauthorized');
+     next(err);
   }
 };

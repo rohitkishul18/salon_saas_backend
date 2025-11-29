@@ -7,7 +7,7 @@ const sendSuccess = (res, data = {}, message = "data fetch successfully", status
   });
 };
 
-const sendError = (res, message = "Something went wrong", status = 500) => {
+const sendError = (res,status = 500, message="something went wrong") => {
   return res.status(status).json({
     success: false,
     message

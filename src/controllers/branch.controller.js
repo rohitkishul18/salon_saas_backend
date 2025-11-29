@@ -51,7 +51,7 @@ const getBranchWithServices = async (req, res) => {
       })),
     });
   } catch (err) {
-    return sendError(res, err.message, 500);
+    return sendError(res,500,err.message);
   }
 };
 
