@@ -1,10 +1,6 @@
 const Service = require('../models/service.model');
 const { sendSuccess, sendError } = require('../utils/response');
 
-
-// ---------------------------
-// ADD SERVICE (supports single & multi)
-// ---------------------------
 const addService = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
@@ -14,8 +10,6 @@ const addService = async (req, res, next) => {
       return sendError(res, 400, "Service name is required");
     }
 
-    // BACKWARD COMPATIBILITY:
-    // If old frontend sends locationId → convert it to an array
     if (!locationIds && locationId) {
       locationIds = [locationId];
     }
@@ -40,10 +34,6 @@ const addService = async (req, res, next) => {
   }
 };
 
-
-// ---------------------------
-// LIST SERVICES
-// ---------------------------
 const listServices = async (req, res, next) => {
   try {
     const salonId = req.user.salonId;
@@ -54,7 +44,7 @@ const listServices = async (req, res, next) => {
     const services = await Service.find({ salonId })
       .skip(skip)
       .limit(limit)
-      .populate("locationIds", "name")  // updated populate field
+      .populate("locationIds", "name") 
       .sort({ createdAt: -1 });
 
     const total = await Service.countDocuments({ salonId });
@@ -73,10 +63,6 @@ const listServices = async (req, res, next) => {
   }
 };
 
-
-// ---------------------------
-// UPDATE SERVICE
-// ---------------------------
 const updateService = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -106,10 +92,6 @@ const updateService = async (req, res, next) => {
   }
 };
 
-
-// ---------------------------
-// DELETE SERVICE
-// ---------------------------
 const deleteService = async (req, res, next) => {
   try {
     const { id } = req.params;

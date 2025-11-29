@@ -132,7 +132,7 @@ const login = async (req, res, next) => {
       return sendError(
         res,
         403,
-        'Your account has been deactivated. Please contact support.'
+        'Your account has been deactivated by admin. Please contact support.'
       );
     }
 
@@ -194,7 +194,7 @@ const forgotPassword = async (req, res, next) => {
 
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase().trim() }).populate('salonId', 'name');
-    
+
     if (!user) {
       // Security: Don't reveal if email exists
       return sendSuccess(

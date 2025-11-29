@@ -58,7 +58,6 @@ const registerCustomer = async (req, res, next) => {
 
     await customer.save();
 
-    // Get public customer data
     const publicCustomer = await Customer.findById(customer._id)
       .select("fullName email phone salonId createdAt")
       .lean();

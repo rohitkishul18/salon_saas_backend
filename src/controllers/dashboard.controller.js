@@ -6,20 +6,12 @@ const Salon = require("../models/salon.model");
 // GET /api/salon/dashboard
 exports.getDashboard = async (req, res) => {
   try {
-    const salonId = req.user.salonId; // from JWT token
-
-    // -----------------------
-    // TODAY RANGE
-    // -----------------------
+    const salonId = req.user.salonId; 
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
-
-    // -----------------------
-    // STATS
-    // -----------------------
     const [
       todayBookings,
       upcoming,
@@ -40,10 +32,6 @@ exports.getDashboard = async (req, res) => {
       Service.countDocuments({ salonId }),
       Location.countDocuments({ salonId })
     ]);
-
-    // -----------------------
-    // NEXT APPOINTMENT
-    // -----------------------
     const next = await Booking.findOne({
       salonId,
       scheduledAt: { $gt: new Date() }
@@ -64,10 +52,6 @@ exports.getDashboard = async (req, res) => {
         location: next.locationId?.name || "Unknown"
       };
     }
-
-    // -----------------------
-    // RECENT BOOKINGS
-    // -----------------------
     const recent = await Booking.find({ salonId })
       .sort({ createdAt: -1 })
       .limit(3)
@@ -83,10 +67,6 @@ exports.getDashboard = async (req, res) => {
             : "N/A"
           )
     }));
-
-    // -----------------------
-    // SETUP STATUS
-    // -----------------------
     const salon = await Salon.findById(salonId);
 
     const status = {
@@ -96,16 +76,13 @@ exports.getDashboard = async (req, res) => {
       locations: locationsCount > 0
     };
 
-    // -----------------------
-    // FINAL RESPONSE
-    // -----------------------
     return res.json({
       stats: {
         todayBookings,
         upcoming,
         services: servicesCount,
         locations: locationsCount
-      },
+      },  
       nextAppointment,
       recentBookings,
       status

@@ -7,21 +7,15 @@ const { sendSuccess, sendError } = require("../utils/response");
 
 exports.getDashboardStats = async (req, res) => {
   try {
-    // Total salons
     const totalSalons = await Salon.countDocuments();
 
-    // Active/Deactive based on OWNER user
     const activeOwners = await User.countDocuments({ role: "salon-owner", isActive: true });
     const deactiveOwners = await User.countDocuments({ role: "salon-owner", isActive: false });
 
-    // Locations & Services
     const totalLocations = await Location.countDocuments();
     const totalServices = await Service.countDocuments();
 
-    // Bookings
     const totalBookings = await Booking.countDocuments();
-
-    // Today bookings
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -29,7 +23,6 @@ exports.getDashboardStats = async (req, res) => {
       createdAt: { $gte: today }
     });
 
-    // ⭐ Recent salons with real active status
     const salons = await Salon.find({})
       .sort({ createdAt: -1 })
       .limit(5)
@@ -44,7 +37,7 @@ exports.getDashboardStats = async (req, res) => {
         id: salon._id,
         name: salon.name,
         ownerName: owner?.name || salon.ownerName,
-        isActive: owner?.isActive ?? false, // ✔ FIXED
+        isActive: owner?.isActive ?? false, 
         createdAt: salon.createdAt
       };
     });
@@ -56,8 +49,8 @@ exports.getDashboardStats = async (req, res) => {
       data: {
         salon: {
           total: totalSalons,
-          active: activeOwners,      // ✔ FIXED
-          deactive: deactiveOwners,  // ✔ FIXED
+          active: activeOwners,      
+          deactive: deactiveOwners,  
         },
         locations: totalLocations,
         services: totalServices,
@@ -65,7 +58,7 @@ exports.getDashboardStats = async (req, res) => {
           total: totalBookings,
           today: todayBookings
         },
-        recentSalons: recentSalons  // ✔ FIXED
+        recentSalons: recentSalons  
       }
     });
 
@@ -95,7 +88,7 @@ exports.getAllSalons = async (req, res, next) => {
         ownerName: owner?.name || "Unknown",
         email: owner?.email || salon.contact?.email,
         phone: owner?.phone || salon.contact?.phone,
-        ownerActive: owner?.isActive ?? false,  // FIXED
+        ownerActive: owner?.isActive ?? false, 
         createdAt: salon.createdAt
       };
     });

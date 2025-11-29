@@ -28,7 +28,7 @@ exports.getHomeData = async (req, res) => {
       branches,
       stats: {
         reviewCount : reviews.length,
-        rating: avgRating.toFixed(1),
+        rating: avgRating,
         serviceCount,
         branchCount: branches.length
       }
