@@ -23,7 +23,7 @@ const addService = async (req, res, next) => {
       salonId,
       locationIds,
       name,
-      description: description || "",
+      // description: description || "",
       price: price || 0,
       durationMinutes: durationMinutes || 30
     });
